@@ -3,13 +3,13 @@ require(RMySQL)
 require(RPostgreSQL)
 require(plyr)     ## instalar com install.packages("plyr")
 require(dplyr)    ## instalar com install.packages("dplyr")
+
 ####################################### Configuracao de Parametros  #####################################################################
 #########################################################################################################################################
-wd <- '~/Git/idart-scripts/upgrade/'  
+wd <- '~/Git/iDART/drug_harmonization/'  
 setwd(wd)
 
-source('sql_querys.R')
-source('genericFunctions.R')
+source('generic_functions.R')
 
 # iDART Stuff - Configuracoes de variaveis de conexao 
 postgres.user ='postgres'
@@ -25,8 +25,8 @@ con_local <-  dbConnect(PostgreSQL(),user = postgres.user,password = postgres.pa
 ## OpenMRS Stuff - Configuracoes de variaveis de conexao 
 openmrs.user ='esaude'
 openmrs.password='esaude'
-openmrs.db.name='altomae'
-openmrs.host='172.18.0.2'
+openmrs.db.name='bagamoio'
+openmrs.host='192.168.1.10'
 openmrs.port=3306
 #us.code= '0111040601' # CS 1 junho# modificar este parametro para cada US. Este e o Cod da US definido pelo MISAU e geralmente e a primeira parte do NID
 # Objecto de connexao com a bd openmrs
@@ -64,9 +64,9 @@ for (i in 1:dim(idart_drugs)[1]) {
         idart_drugs$uuid_padronizado[i] = uuid_padronizado
          # ACtualiza o uuidopenmrs na tabela drug do iDART com base no uuiopenmrs do openmrs
         
-        
-        dbExecute(con_local,
-          paste0( "update public.drug set uuidopenmrs ='",uuid_padronizado,"'", " where id = ", id," ;"      )  )
+        print(paste0( "update public.drug set uuidopenmrs ='",uuid_padronizado,"'", " where id = ", id," ;"      ) )
+        #dbExecute(con_local,
+        #  paste0( "update public.drug set uuidopenmrs ='",uuid_padronizado,"'", " where id = ", id," ;"      )  )
         
       } 
   }
@@ -84,3 +84,18 @@ idart_drugs = subset(idart_drugs, !grepl('DDI',x = idart_drugs$name,)  )
 idart_drugs = subset(idart_drugs, !grepl('SQV',x = idart_drugs$name,)  )
 
 df_notfound <- subset(idart_drugs, idart_drugs$status=='not found', )
+
+mapply(compare,idart_drugs$uuidopenmrs ,idart_drugs$uuid_padronizado)
+
+compare <- function(x,y) {
+  
+  if( !is.na(x) & !is.na(y) ){
+    if(x==y){
+      return(TRUE)
+    } else {
+      return(FALSE)
+    }
+  }
+
+  
+}
