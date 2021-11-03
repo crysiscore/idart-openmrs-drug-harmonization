@@ -27,7 +27,7 @@ select * from sync_openmrs_dispense where regimenanswer is null or regimenanswer
 
 -- Solucao 
 -- update  sync_openmrs_dispense  set 
--- regimenanswer = '7bf5a88d-6db6-4899-a01a-bfd14ce77b53' where nid ='0111050701/2014/00607' and regimenanswer is null or regimenanswer ='' ;
+-- regimenanswer = '7bf5a88d-6db6-4899-a01a-bfd14ce77b53' where nid ='0111050701/2014/00607' and ( regimenanswer is null or regimenanswer ='') ;
 
 
 
